@@ -11,6 +11,9 @@ namespace json_test
 {
     static partial class JsonParser
     {
+        /// <remarks>
+        /// Parses via Sequence, but doesn't ever need to copy bytes. Puts onus on Utf8JsonReader to be fast with Sequence.
+        /// </remarks>
         public static async Task<T> ParseNoCopyAsync<T, TParser>(Stream stream, CancellationToken cancellationToken)
             where TParser : IJsonParser<T>, new()
         {

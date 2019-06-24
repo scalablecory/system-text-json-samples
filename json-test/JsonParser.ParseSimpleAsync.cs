@@ -11,6 +11,9 @@ namespace json_test
 {
     static partial class JsonParser
     {
+        /// <remarks>
+        /// Parses via Span using a single growing buffer.
+        /// </remarks>
         public static async Task<T> ParseSimpleAsync<T, TParser>(Stream stream, CancellationToken cancellationToken)
             where TParser : IJsonParser<T>, new()
         {
