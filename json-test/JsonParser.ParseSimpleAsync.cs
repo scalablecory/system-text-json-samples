@@ -63,7 +63,7 @@ namespace json_test
                 var reader = new Utf8JsonReader(buffer.AsSpan(consumed, fill - consumed), done, readerState);
                 bool res = parser.TryContinueParse(ref reader);
 
-                consumed += (int)reader.CurrentState.BytesConsumed;
+                consumed += (int)reader.BytesConsumed;
                 readerState = reader.CurrentState;
 
                 return res;
