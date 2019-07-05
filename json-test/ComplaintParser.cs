@@ -44,6 +44,13 @@ namespace json_test
                     }
                 case State.Complaint:
                 Complaint:
+                    // For simplicity, this section reads property names and values together.
+                    // This is a trade-off: if a value fails to fully read, the property name
+                    // will be stuck in the buffer and when we next resume it will need to be
+                    // re-parsed. This is probably okay for most cases when values are expected
+                    // to be small, but for larger values the value parsing should be broken out
+                    // into its own step in the state machine.
+
                     Utf8JsonReader oldReader = reader;
 
                     if (!reader.Read()) return false;
@@ -51,30 +58,23 @@ namespace json_test
                     switch (reader.TokenType)
                     {
                         case JsonTokenType.PropertyName:
-                            switch (reader.GetString())
+                            string propertyName = reader.GetString();
+
+                            if (!reader.Read())
+                            {
+                                reader = oldReader;
+                                return false;
+                            }
+
+                            switch (propertyName)
                             {
                                 case "id":
-                                    if (!reader.Read())
-                                    {
-                                        reader = oldReader;
-                                        return false;
-                                    }
                                     currentComplaint.Id = reader.GetString();
                                     goto Complaint;
                                 case "name":
-                                    if (!reader.Read())
-                                    {
-                                        reader = oldReader;
-                                        return false;
-                                    }
                                     currentComplaint.Name = reader.GetString();
                                     goto Complaint;
                                 case "viewCount":
-                                    if (!reader.Read())
-                                    {
-                                        reader = oldReader;
-                                        return false;
-                                    }
                                     currentComplaint.ViewCount = reader.GetInt32();
                                     goto Complaint;
                                 default:

@@ -16,7 +16,7 @@ TODO.
 
 ## Utf8JsonReader
 
-`Utf8JsonReader` is a lower-level pull parser similar to `XmlReader`.
+`Utf8JsonReader` is a pull parser similar to `XmlReader`. It is a bit low-level, presenting the document as a stream of tokens that you must interpret.
 
 ### Parsing synchronously
 
@@ -28,9 +28,9 @@ This is the simplest parser you can write on top of `Utf8JsonReader`, with each 
 
 `Complaint.ReadAsync` implements an asynchronous parser on top of `Stream`.
 
-This does not load the entire `Stream` into memory: instead, it is parsed in reasonably sized chunks. We must handle the case where `Utf8JsonReader` exhausted the current buffer, and we must read the next chunk. Because `Utf8JsonReader` is a `ref struct`, we can not use it in an `async` method and must instead implement our own state machine manually. This makes things a bit harder to follow.
+This does not load the entire `Stream` into memory: instead, it is parsed in reasonably sized chunks. We must handle the case where `Utf8JsonReader` has exhausted the current buffer, and read the next chunk. Because `Utf8JsonReader` is a `ref struct`, we can not use it in an `async` method and must instead implement our own state machine manually. This makes things a bit harder to follow.
 
 This is implemented via a resumable, I/O-agnostic parser `ComplaintParser` that is passed to one of three methods which handle the I/O:
-* See JsonParser.Memory.cs for a simple Span-based implementation that uses that parser.
-* See JsonParser.ParseSimpleAsync.cs for a Stream-based implementation that implements trivial copy & grow buffering.
-* See Jsonparser.ParseNoCopyAsync.cs for a Stream-based implementation that implements sequences to avoid copying when growing buffers.
+* See [JsonParser.Memory.cs](json-test/JsonParser.Memory.cs) for a simple `Span`-based implementation that uses that parser.
+* See [JsonParser.ParseSimpleAsync.cs](json-test/JsonParser.ParseSimpleAsync.cs) for a `Stream`-based implementation that implements trivial copy & grow buffering.
+* See [Jsonparser.ParseNoCopyAsync.cs](json-test/JsonParser.ParseNoCopyAsync.cs) for a `Stream`-based implementation that implements sequences to avoid copying when growing buffers.
